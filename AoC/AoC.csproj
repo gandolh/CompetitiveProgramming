@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.10" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="in_out\quest1_0.in">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
