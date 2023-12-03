@@ -3,7 +3,9 @@ using AoC;
 using BenchmarkDotNet.Running;
 
 
-Quest1 q = new Quest1();
+//BaseQuest q = new Quest1();
+//BaseQuest q = new Quest2();
+BaseQuest q = new Quest3();
 q.Solve();
 
-var summary = BenchmarkRunner.Run<BenchmarkQuiz1>();
+var summary = BenchmarkRunner.Run<BenchmarkQuiz>();
