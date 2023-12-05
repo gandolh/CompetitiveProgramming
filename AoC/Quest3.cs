@@ -13,7 +13,7 @@ namespace AoC
         private readonly int[] dirY = [1, 1, 0, -1, -1, -1, 0, 1];
         private readonly Dictionary<Coordinate, List<int>> gearLocValue = new Dictionary<Coordinate, List<int>>();
 
-        public override void Solve()
+        public override Task Solve()
         {
             string inPath = GetPathTo("quest3_1.in");
             string outPath = GetPathTo("quest3_2.out");
@@ -60,7 +60,7 @@ namespace AoC
                     sum = sum + entry.Value[0] * entry.Value[1];
             }
 
-
+            return Task.CompletedTask;
             File.AppendAllText(outPath, sum.ToString());
         }
 

@@ -6,7 +6,7 @@ namespace AoC
     {
         private Regex _regex = new Regex(" +");
 
-        public override void Solve()
+        public override Task Solve()
         {
             string inPath = GetPathTo("quest5_0.in");
             string outPath = GetPathTo("questResult.out");
@@ -45,6 +45,7 @@ namespace AoC
 
             sum = instancesOfCard.Aggregate((el1, el2) => el1 + el2);
             File.WriteAllText(outPath, sum.ToString());
+            return Task.CompletedTask;
         }
 
 

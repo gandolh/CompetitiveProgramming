@@ -9,6 +9,6 @@
             return Path.Join(startupPath, inOutFolder, quizFile);
         }
 
-        public abstract void Solve();
+        public abstract Task Solve();
     }
 }

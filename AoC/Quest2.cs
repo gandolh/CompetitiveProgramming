@@ -13,7 +13,7 @@ namespace AoC
         private readonly int maxGreen = 13;
         private readonly int maxBlue = 14;
 
-        public override void Solve()
+        public override Task Solve()
         {
             string inPath = GetPathTo("quest2_1.in");
             string outPath = GetPathTo("quest2_2.out");
@@ -23,6 +23,7 @@ namespace AoC
 
             //FirstSubProblem(lines, outPath);
             SecondSubProblem(lines, outPath);
+            return Task.CompletedTask;
         }
 
         private void SecondSubProblem(string[] lines, string outPath)

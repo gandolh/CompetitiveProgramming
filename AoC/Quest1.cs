@@ -26,7 +26,7 @@ namespace AoC
             {9, "nine" },
         };
 
-        public override void Solve()
+        public override Task Solve()
         {
             string inPath = GetPathTo("quest1_2.in");
             string outPath = GetPathTo("quest1_2.out");
@@ -61,6 +61,7 @@ namespace AoC
                 sum += caliber;
             }
             File.AppendAllText(outPath, sum.ToString());
+            return Task.CompletedTask;
         }
 
         private int GetNumberIfFound(string line, int i)

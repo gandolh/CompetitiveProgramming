@@ -1,4 +1,7 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using AoC.Data;
+using BenchmarkDotNet.Attributes;
+using Microsoft.Diagnostics.Tracing.Parsers.JScript;
+using Microsoft.Diagnostics.Tracing.StackSources;
 using System.Text.RegularExpressions;
 
 namespace AoC
@@ -6,10 +9,10 @@ namespace AoC
     internal class Quest5 : BaseQuest
     {
         private Regex _regex = new Regex(" +");
-        private List<Dictionary<Int64, Int64>> Mappers = new();
+        private Dictionary<int, List<Vector3<long>>> Mappers = new();
 
 
-        public override void Solve()
+        public override async Task Solve()
         {
             string inPath = GetPathTo("quest5_1.in");
             string outPath = GetPathTo("questResult.out");
@@ -18,7 +21,7 @@ namespace AoC
             File.WriteAllText(outPath, "");
 
             string[] splitArray = lines[0].Split("seeds: ");
-            List<Int64> seeds = ToIntList(splitArray[1]);
+            List<long> seeds = ToIntList(splitArray[1]);
             int step = -1;
 
             for (int i = 1; i < lines.Length; i++)
@@ -27,35 +30,65 @@ namespace AoC
                 if (line.Contains("map:"))
                 {
                     step++;
-                    Mappers.Add(new Dictionary<Int64, Int64>());
+                    Mappers[step] = new();
                     continue;
                 }
 
                 if (line == "") continue;
 
-                List<Int64> lineNumbers = ToIntList(line);
-                for (int j = 0; j < lineNumbers[2]; j++)
-                {
-                    Mappers[step][lineNumbers[1] + j] 
-                }
+                var lineNumbers = ToIntList(line);
+                Mappers[step].Add(new Vector3<long>(lineNumbers[0],
+                    lineNumbers[1], lineNumbers[2]));
             }
 
 
             Int64 minLocation = Int64.MaxValue;
-            for( int i = 0; i< seeds.Count;i++)
+            Vector3<long>[] lastMapper = new Vector3<long>[7];
+            for (int i = 0; i < seeds.Count; i += 2)
             {
-                Int64 seedResult = seeds[i];
-                for (int j = 0; j < Mappers.Count; j++)
+                List<Task<long>> tasks = new();
+                for (int l = 0; l < seeds[i + 1]; l++)
                 {
-                    Int64 tmpResult = -1;
-                    var found = Mappers[j].TryGetValue(seedResult, out tmpResult);
-                    if (found) seedResult = tmpResult;
+                    Int64 seedResult = seeds[i] + l;
+                    Task<long> t1 = Task.Run<long>(() => GetSeedResult(seedResult, lastMapper));
+                    tasks.Add(t1);
+                  
                 }
-                if(seedResult < minLocation) minLocation = seedResult;
+
+                long[] seedResults = await Task.WhenAll(tasks);
+                long tmpMin = seedResults.Min();
+                if (tmpMin < minLocation)
+                    minLocation = tmpMin;
+
             }
 
             File.WriteAllText(outPath, minLocation.ToString());
 
+        }
+
+        private long GetSeedResult(long seedResult, Vector3<long>[] lastMapper)
+        {
+            for (int j = 0; j < Mappers.Count; j++)
+            {
+                    if (lastMapper[j] != null && seedResult >= lastMapper[j].Second && seedResult <= (lastMapper[j].Second + lastMapper[j].Third - 1))
+                    {
+                        seedResult = lastMapper[j].First + (seedResult - lastMapper[j].Second);
+                    }
+                    else
+                    {
+                        for (int k = 0; k < Mappers[j].Count; k++)
+                        {
+                            Vector3<long> mapper = Mappers[j][k];
+                            if (seedResult >= mapper.Second && seedResult <= (mapper.Second + mapper.Third - 1))
+                            {
+                                seedResult = mapper.First + (seedResult - mapper.Second);
+                                lastMapper[j] = mapper;
+                                break;
+                            }
+                        }
+                }
+            }
+            return seedResult;
         }
 
         private List<Int64> ToIntList(string numbers)

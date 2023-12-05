@@ -9,4 +9,4 @@ using BenchmarkDotNet.Running;
 BaseQuest q = new Quest5();
 q.Solve();
 
-var summary = BenchmarkRunner.Run<BenchmarkQuiz>();
+//var summary = BenchmarkRunner.Run<BenchmarkQuiz>();
