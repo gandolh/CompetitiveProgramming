@@ -27,10 +27,17 @@ namespace AoC
         //    q.Solve();
         //}
 
-        [Benchmark]
+        //[Benchmark]
         public void Benchmark3()
         {
             Quest3 q = new Quest3();
+            q.Solve();
+        }
+
+        [Benchmark]
+        public void Benchmark4()
+        {
+            BaseQuest q = new Quest4();
             q.Solve();
         }
     }
