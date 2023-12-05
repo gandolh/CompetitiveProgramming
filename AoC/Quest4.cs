@@ -1,10 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace AoC
 {
@@ -14,7 +8,7 @@ namespace AoC
 
         public override void Solve()
         {
-            string inPath = GetPathTo("quest4_0.in");
+            string inPath = GetPathTo("quest5_0.in");
             string outPath = GetPathTo("questResult.out");
             string[] lines = System.IO.File.ReadAllLines(inPath);
             int sum = 0;
