@@ -3,13 +3,13 @@
     internal class Quest7 : BaseQuest
     {
         public enum HandType {
-            HighCard,
-            OnePair,
-            TwoPair,
-            ThreeOfAKind,
-            FullHouse,
-            FourOfAKind,
-            FiveOfAKind
+            HighCard = 0,
+            OnePair = 1,
+            TwoPair = 2,
+            ThreeOfAKind = 3,
+            FullHouse = 4,
+            FourOfAKind = 5,
+            FiveOfAKind = 6
         }
 
 
@@ -64,9 +64,9 @@
         private int getCharValue(char a)
         {
             int value = 0;
+            if (a == 'J') value = 1;
             if (a >= '0' && a <= '9') value = a - '0';
             if (a == 'T') value = 10;
-            if (a == 'J') value = 11;
             if (a == 'Q') value = 12;
             if (a == 'K') value = 13;
             if (a == 'A') value = 14;
@@ -78,6 +78,7 @@
             int[] frequencyArray = new int[5];
             for(int i = 0; i < 5; i++)
             {
+                if (hand[i] == 'J') continue;
                 frequencyArray[i] = hand.Count(x => x == hand[i]);
             }
 
@@ -96,6 +97,9 @@
                     max2 = frequencyArray[i];
                 }
             }
+
+            int numberOfJokers = hand.Count(el => el == 'J');
+            max1 = max1 + numberOfJokers;
 
             return (max1, max2);
         }
