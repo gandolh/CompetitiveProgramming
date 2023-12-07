@@ -1,4 +1,6 @@
-﻿namespace AoC
+﻿using System.Text.RegularExpressions;
+
+namespace AoC
 {
     internal abstract class BaseQuest
     {
@@ -11,4 +13,5 @@
 
         public abstract Task Solve();
     }
+
 }

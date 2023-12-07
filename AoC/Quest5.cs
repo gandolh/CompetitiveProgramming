@@ -50,16 +50,18 @@ namespace AoC
                 for (int l = 0; l < seeds[i + 1]; l++)
                 {
                     Int64 seedResult = seeds[i] + l;
-                    Task<long> t1 = Task.Run<long>(() => GetSeedResult(seedResult, lastMapper));
-                    tasks.Add(t1);
-                  
+                    seedResult = GetSeedResult(seedResult, lastMapper);
+                    if (seedResult < minLocation)
+                        minLocation = seedResult;
                 }
-
-                long[] seedResults = await Task.WhenAll(tasks);
-                long tmpMin = seedResults.Min();
-                if (tmpMin < minLocation)
-                    minLocation = tmpMin;
-
+                // OR
+                //Parallel.For(0, seeds[i + 1], (index) =>
+                //{
+                //    Int64 seedResult = seeds[i] + index;
+                //    seedResult = GetSeedResult(seedResult, lastMapper);
+                //    if (seedResult < minLocation)
+                //        minLocation = seedResult;
+                //});
             }
 
             File.WriteAllText(outPath, minLocation.ToString());
