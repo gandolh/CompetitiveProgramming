@@ -50,14 +50,6 @@ namespace AoC
                         minLocation = seedResult;
                     l = l + skippingRange - 1;
                 }
-                // OR
-                //Parallel.For(0, seeds[i + 1], (index) =>
-                //{
-                //    Int64 seedResult = seeds[i] + index;
-                //    seedResult = GetSeedResult(seedResult, lastMapper);
-                //    if (seedResult < minLocation)
-                //        minLocation = seedResult;
-                //});
             }
 
             //File.WriteAllText(outPath, minLocation.ToString());

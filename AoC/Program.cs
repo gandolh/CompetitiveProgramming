@@ -7,9 +7,10 @@ using BenchmarkDotNet.Running;
 //BaseQuest q = new Quest2();
 //BaseQuest q = new Quest3();
 //BaseQuest q = new Quest4();
-BaseQuest q = new Quest5();
+//BaseQuest q = new Quest5();
 //BaseQuest q = new Quest6();
 //BaseQuest q = new Quest7();
+BaseQuest q = new Quest8();
 await q.Solve();
 
 //var summary = BenchmarkRunner.Run<BenchmarkQuiz>();
