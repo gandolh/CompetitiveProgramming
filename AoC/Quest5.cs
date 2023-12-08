@@ -1,7 +1,4 @@
 ﻿using AoC.Data;
-using BenchmarkDotNet.Attributes;
-using Microsoft.Diagnostics.Tracing.Parsers.JScript;
-using Microsoft.Diagnostics.Tracing.StackSources;
 using System.Text.RegularExpressions;
 
 namespace AoC
@@ -43,16 +40,15 @@ namespace AoC
 
 
             Int64 minLocation = Int64.MaxValue;
-            Vector3<long>[] lastMapper = new Vector3<long>[7];
             for (int i = 0; i < seeds.Count; i += 2)
             {
-                List<Task<long>> tasks = new();
-                for (int l = 0; l < seeds[i + 1]; l++)
+                for (long l = 0; l < seeds[i + 1]; l++)
                 {
                     Int64 seedResult = seeds[i] + l;
-                    seedResult = GetSeedResult(seedResult, lastMapper);
+                    (seedResult, long skippingRange) = GetSeedResult(seedResult);
                     if (seedResult < minLocation)
                         minLocation = seedResult;
+                    l = l + skippingRange - 1;
                 }
                 // OR
                 //Parallel.For(0, seeds[i + 1], (index) =>
@@ -64,33 +60,29 @@ namespace AoC
                 //});
             }
 
-            File.WriteAllText(outPath, minLocation.ToString());
-
+            //File.WriteAllText(outPath, minLocation.ToString());
+            Console.WriteLine(minLocation);
         }
 
-        private long GetSeedResult(long seedResult, Vector3<long>[] lastMapper)
+        private (long, long) GetSeedResult(long seedResult)
         {
+            long skippingRange = Int64.MaxValue;
             for (int j = 0; j < Mappers.Count; j++)
             {
-                    if (lastMapper[j] != null && seedResult >= lastMapper[j].Second && seedResult <= (lastMapper[j].Second + lastMapper[j].Third - 1))
+
+                for (int k = 0; k < Mappers[j].Count; k++)
+                {
+                    Vector3<long> mapper = Mappers[j][k];
+                    if (seedResult >= mapper.Second && seedResult <= (mapper.Second + mapper.Third - 1))
                     {
-                        seedResult = lastMapper[j].First + (seedResult - lastMapper[j].Second);
+                        seedResult = mapper.First + (seedResult - mapper.Second);
+                        long diff = mapper.First + mapper.Third - seedResult;
+                        if (diff < skippingRange) skippingRange = diff;
+                        break;
                     }
-                    else
-                    {
-                        for (int k = 0; k < Mappers[j].Count; k++)
-                        {
-                            Vector3<long> mapper = Mappers[j][k];
-                            if (seedResult >= mapper.Second && seedResult <= (mapper.Second + mapper.Third - 1))
-                            {
-                                seedResult = mapper.First + (seedResult - mapper.Second);
-                                lastMapper[j] = mapper;
-                                break;
-                            }
-                        }
                 }
             }
-            return seedResult;
+            return (seedResult, skippingRange);
         }
 
         private List<Int64> ToIntList(string numbers)
