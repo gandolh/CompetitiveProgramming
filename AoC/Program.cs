@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using AoC;
-using BenchmarkDotNet.Running;
+using AoC.Quest10;
 
 
 //BaseQuest q = new Quest1();
@@ -11,7 +11,7 @@ using BenchmarkDotNet.Running;
 //BaseQuest q = new Quest6();
 //BaseQuest q = new Quest7();
 //BaseQuest q = new Quest8();
-BaseQuest q = new Quest9();
+BaseQuest q = new Quest10();
 await q.Solve();
 
 //var summary = BenchmarkRunner.Run<BenchmarkQuiz>();

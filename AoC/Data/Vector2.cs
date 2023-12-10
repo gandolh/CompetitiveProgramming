@@ -1,6 +1,9 @@
-﻿namespace AoC.Data
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Numerics;
+
+namespace AoC.Data
 {
-    internal class Vector2<T1>
+    internal class Vector2<T1> 
     {
         public T1 first { get; set; }
         public T1 second { get; set; }
@@ -9,6 +12,10 @@
         {
             this.first = first;
             this.second = second;
+        }
+
+        private Vector2()
+        {
         }
 
         public T1 this[int key]
@@ -35,6 +42,15 @@
             return HashCode.Combine(first, second);
         }
 
-       
+        public static Vector2<T1> operator +(Vector2<T1> vector1, Vector2<T1> vector2)
+        {
+            dynamic first = vector1.first;
+            dynamic second = vector1.second;
+            dynamic otherFirst = vector2.first;
+            dynamic otherSecond = vector2.second;
+
+            return new Vector2<T1>(first + otherFirst, second + otherSecond);
+        }
+
     }
 }
