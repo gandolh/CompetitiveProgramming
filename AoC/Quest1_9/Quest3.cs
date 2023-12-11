@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AoC
+namespace AoC.Quest1_9
 {
     internal class Quest3 : BaseQuest
     {
@@ -17,7 +17,7 @@ namespace AoC
         {
             string inPath = GetPathTo("quest3_1.in");
             string outPath = GetPathTo("quest3_2.out");
-            string[] lines = System.IO.File.ReadAllLines(inPath);
+            string[] lines = File.ReadAllLines(inPath);
             int sum = 0;
             File.WriteAllText(outPath, "");
 
@@ -37,7 +37,7 @@ namespace AoC
                         if (hasSymbolNeighbour)
                         {
                             isPart = true;
-                            if(foundStarCoord != null)
+                            if (foundStarCoord != null)
                                 starCoord = foundStarCoord;
                         }
                         j++;
@@ -55,8 +55,9 @@ namespace AoC
             }
 
             // do math for stars
-            foreach (var entry in gearLocValue) {
-                  if (entry.Value.Count  == 2)
+            foreach (var entry in gearLocValue)
+            {
+                if (entry.Value.Count == 2)
                     sum = sum + entry.Value[0] * entry.Value[1];
             }
 
@@ -72,7 +73,7 @@ namespace AoC
             Coordinate? coord = null;
             for (int k = 0; k < dirX.Length; k++)
             {
-                if (i - dirX[k] < 0 || i - dirX[k] >= lines.Length 
+                if (i - dirX[k] < 0 || i - dirX[k] >= lines.Length
                     || j - dirY[k] < 0 || j - dirY[k] >= lines.Length)
                     continue;
                 char visitedNeighbour = lines[i - dirX[k]][j - dirY[k]];
@@ -80,7 +81,7 @@ namespace AoC
                 {
                     if (visitedNeighbour == '*')
                         coord = new Coordinate(i - dirX[k], j - dirY[k]);
-                    found =  true;
+                    found = true;
                 }
             }
             return (found, coord);

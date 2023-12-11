@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace AoC
+namespace AoC.Quest1_9
 {
     internal class Quest6 : BaseQuest
     {
@@ -15,25 +15,25 @@ namespace AoC
         {
             string inPath = GetPathTo("quest6_1.in");
             string outPath = GetPathTo("questResult.out");
-            string[] lines = System.IO.File.ReadAllLines(inPath);
+            string[] lines = File.ReadAllLines(inPath);
             long result = 1;
             File.WriteAllText(outPath, "");
 
             long times = ToIntRemoveSpaces(lines[0].Split("Time:")[1].Trim());
             long distances = ToIntRemoveSpaces(lines[1].Split("Distance:")[1].Trim());
-                int nr = 0;
-                bool foundOne = false;
-                for (int j = 0; j < times; j++)
+            int nr = 0;
+            bool foundOne = false;
+            for (int j = 0; j < times; j++)
+            {
+                if (j * (times - j) > distances)
                 {
-                    if (j * (times - j) > distances)
-                    {
-                        nr++;
-                        foundOne = true;
-                    }
-                    else if (foundOne == true)
-                        break;
+                    nr++;
+                    foundOne = true;
                 }
-                result = nr;
+                else if (foundOne == true)
+                    break;
+            }
+            result = nr;
 
 
             File.WriteAllText(outPath, result.ToString());
@@ -42,14 +42,14 @@ namespace AoC
         }
 
 
-        private Int64[] ToIntList(string numbers)
+        private long[] ToIntList(string numbers)
         {
-            return _regex.Split(numbers).Select((el) => Int64.Parse(el)).ToArray();
+            return _regex.Split(numbers).Select((el) => long.Parse(el)).ToArray();
         }
 
-        private Int64 ToIntRemoveSpaces(string number)
+        private long ToIntRemoveSpaces(string number)
         {
-            return Int64.Parse(number.Replace(" ",""));
+            return long.Parse(number.Replace(" ", ""));
         }
     }
 }

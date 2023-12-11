@@ -1,7 +1,7 @@
 ﻿using AoC.Data;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace AoC
+namespace AoC.Quest1_9
 {
     internal class Quest8 : BaseQuest
     {
@@ -12,7 +12,7 @@ namespace AoC
         {
             string inPath = GetPathTo("quest8_1.in");
             string outPath = GetPathTo("questResult.out");
-            string[] lines = System.IO.File.ReadAllLines(inPath);
+            string[] lines = File.ReadAllLines(inPath);
             string destination = "ZZZ";
             File.WriteAllText(outPath, "");
             int[] directions = new int[lines[0].Length];
@@ -31,9 +31,9 @@ namespace AoC
 
 
             int result = 0;
-            MyTriple< string, long, long>[] zFindings = new MyTriple<string, long, long>[Locations.Count];
+            MyTriple<string, long, long>[] zFindings = new MyTriple<string, long, long>[Locations.Count];
             for (int i = 0; i < Locations.Count; i++)
-                zFindings[i] = new MyTriple<string, long, long>("",-1,-1);
+                zFindings[i] = new MyTriple<string, long, long>("", -1, -1);
 
             bool finishWhile = false;
             while (finishWhile == false)
@@ -46,7 +46,7 @@ namespace AoC
                     if (Locations[i].EndsWith('Z'))
                     {
                         zFindings[i].First = Locations[i];
-                        if(zFindings[i].Second == -1)
+                        if (zFindings[i].Second == -1)
                             zFindings[i].Second = result + 1;
                         else if (zFindings[i].Third == -1)
                             zFindings[i].Third = result + 1;
@@ -58,7 +58,7 @@ namespace AoC
                 finishWhile = zFindings.All(el => el.Third >= 0);
             }
 
-            Int64 finalResult = 1;
+            long finalResult = 1;
             for (int i = 0; i < zFindings.Length; i++)
                 finalResult = LCM(finalResult, zFindings[i].Third - zFindings[i].Second);
 
@@ -83,7 +83,7 @@ namespace AoC
         // least common multiple
         static long LCM(long a, long b)
         {
-            return (a * b) / GCD(a, b);
+            return a * b / GCD(a, b);
         }
 
 

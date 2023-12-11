@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AoC
+namespace AoC.Quest1_9
 {
     internal class Quest2 : BaseQuest
     {
@@ -17,7 +17,7 @@ namespace AoC
         {
             string inPath = GetPathTo("quest2_1.in");
             string outPath = GetPathTo("quest2_2.out");
-            string[] lines = System.IO.File.ReadAllLines(inPath);
+            string[] lines = File.ReadAllLines(inPath);
             File.WriteAllText(outPath, "");
 
 
@@ -44,9 +44,9 @@ namespace AoC
                 for (int i = 0; i < games.Length; i++)
                 {
                     (int r, int g, int b) = extractRgbFromGame(games[i]);
-                    if(r > maxR) maxR = r;
-                    if(g > maxG) maxG = g;
-                    if(b > maxB) maxB = b;
+                    if (r > maxR) maxR = r;
+                    if (g > maxG) maxG = g;
+                    if (b > maxB) maxB = b;
                 }
                 int power = maxR * maxG * maxB;
                 sum = sum + power;

@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using AoC.Quest1_9;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using System;
 using System.Collections.Generic;

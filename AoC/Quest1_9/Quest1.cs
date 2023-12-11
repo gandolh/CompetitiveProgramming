@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace AoC
+namespace AoC.Quest1_9
 {
     /// <summary>
     /// We can do a lexical tree, but im lazy.
@@ -30,7 +30,7 @@ namespace AoC
         {
             string inPath = GetPathTo("quest1_2.in");
             string outPath = GetPathTo("quest1_2.out");
-            string[] lines = System.IO.File.ReadAllLines(inPath);
+            string[] lines = File.ReadAllLines(inPath);
             File.WriteAllText(outPath, "");
 
             int sum = 0;
@@ -57,7 +57,7 @@ namespace AoC
                 }
 
 
-                int caliber = (firstEncounter * 10 + lastEncounter);
+                int caliber = firstEncounter * 10 + lastEncounter;
                 sum += caliber;
             }
             File.AppendAllText(outPath, sum.ToString());

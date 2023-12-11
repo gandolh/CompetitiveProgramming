@@ -1,7 +1,7 @@
 ﻿using Microsoft.Diagnostics.Tracing.Parsers.JScript;
 using System.Text.Json.Serialization;
 
-namespace AoC
+namespace AoC.Quest1_9
 {
     internal class Quest9 : BaseQuest
     {
@@ -9,15 +9,15 @@ namespace AoC
         {
             string inPath = GetPathTo("quest9_1.in");
             string outPath = GetPathTo("questResult.out");
-            string[] lines = System.IO.File.ReadAllLines(inPath);
+            string[] lines = File.ReadAllLines(inPath);
             File.WriteAllText(outPath, "");
 
-            Int64 sum = 0;
+            long sum = 0;
 
             foreach (string line in lines)
             {
-                Int64 nextItemInLine = 0;
-                List<Int64> integers = ToInt(line);
+                long nextItemInLine = 0;
+                List<long> integers = ToInt(line);
                 int seqLength = integers.Count();
                 integers.Reverse();
 
@@ -35,9 +35,9 @@ namespace AoC
             return Task.CompletedTask;
         }
 
-        private List<Int64> ToInt(string str)
+        private List<long> ToInt(string str)
         {
-            return str.Split(" ").Select(el => Int64.Parse(el)).ToList();
+            return str.Split(" ").Select(el => long.Parse(el)).ToList();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace AoC
+namespace AoC.Quest1_9
 {
     internal class Quest4 : BaseQuest
     {
@@ -10,7 +10,7 @@ namespace AoC
         {
             string inPath = GetPathTo("quest5_0.in");
             string outPath = GetPathTo("questResult.out");
-            string[] lines = System.IO.File.ReadAllLines(inPath);
+            string[] lines = File.ReadAllLines(inPath);
             int sum = 0;
             File.WriteAllText(outPath, "");
             // indexing from 1. (blasphemy)
@@ -52,7 +52,7 @@ namespace AoC
         // numbers in str separated by " ". Convert to int[]
         private List<int> ToIntList(string numbers)
         {
-            return _regex.Split(numbers).Select((el) => Int32.Parse(el)).ToList();
+            return _regex.Split(numbers).Select((el) => int.Parse(el)).ToList();
         }
     }
 }

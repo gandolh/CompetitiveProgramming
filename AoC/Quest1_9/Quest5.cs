@@ -1,7 +1,7 @@
 ﻿using AoC.Data;
 using System.Text.RegularExpressions;
 
-namespace AoC
+namespace AoC.Quest1_9
 {
     internal class Quest5 : BaseQuest
     {
@@ -13,7 +13,7 @@ namespace AoC
         {
             string inPath = GetPathTo("quest5_1.in");
             string outPath = GetPathTo("questResult.out");
-            string[] lines = System.IO.File.ReadAllLines(inPath);
+            string[] lines = File.ReadAllLines(inPath);
             int result = 0;
             File.WriteAllText(outPath, "");
 
@@ -39,12 +39,12 @@ namespace AoC
             }
 
 
-            Int64 minLocation = Int64.MaxValue;
+            long minLocation = long.MaxValue;
             for (int i = 0; i < seeds.Count; i += 2)
             {
                 for (long l = 0; l < seeds[i + 1]; l++)
                 {
-                    Int64 seedResult = seeds[i] + l;
+                    long seedResult = seeds[i] + l;
                     (seedResult, long skippingRange) = GetSeedResult(seedResult);
                     if (seedResult < minLocation)
                         minLocation = seedResult;
@@ -58,14 +58,14 @@ namespace AoC
 
         private (long, long) GetSeedResult(long seedResult)
         {
-            long skippingRange = Int64.MaxValue;
+            long skippingRange = long.MaxValue;
             for (int j = 0; j < Mappers.Count; j++)
             {
 
                 for (int k = 0; k < Mappers[j].Count; k++)
                 {
                     Vector3<long> mapper = Mappers[j][k];
-                    if (seedResult >= mapper.Second && seedResult <= (mapper.Second + mapper.Third - 1))
+                    if (seedResult >= mapper.Second && seedResult <= mapper.Second + mapper.Third - 1)
                     {
                         seedResult = mapper.First + (seedResult - mapper.Second);
                         long diff = mapper.First + mapper.Third - seedResult;
@@ -77,9 +77,9 @@ namespace AoC
             return (seedResult, skippingRange);
         }
 
-        private List<Int64> ToIntList(string numbers)
+        private List<long> ToIntList(string numbers)
         {
-            return _regex.Split(numbers).Select((el) => Int64.Parse(el)).ToList();
+            return _regex.Split(numbers).Select((el) => long.Parse(el)).ToList();
         }
     }
 }
