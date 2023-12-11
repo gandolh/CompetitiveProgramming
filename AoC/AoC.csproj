@@ -11,10 +11,4 @@
     <PackageReference Include="BenchmarkDotNet" Version="0.13.10" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="in_out\1_7\quest1_0.in">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
