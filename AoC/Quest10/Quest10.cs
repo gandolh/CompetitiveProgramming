@@ -23,29 +23,40 @@ namespace AoC.Quest10
             int m = lines[0].Length;
             MatrixCoordinate posS = new MatrixCoordinate(-1, -1);
             Vector2<MatrixCoordinate>[,] vectorField = new Vector2<MatrixCoordinate>[m, n];
-            int[,] walkingMatrix = new int[m, n];
 
             for (int i = 0; i < lines.Length; i++)
                 for (int j = 0; j < lines[i].Length; j++)
                 {
                     if (lines[i][j] != 'S')
-                        vectorField[j, i] = getDirections(lines[i][j]);
+                        vectorField[j, i] = GetDirections(lines[i][j]);
                     else
                         posS = new MatrixCoordinate(j, i);
                 }
 
             (MatrixCoordinate x, MatrixCoordinate y) = getDirectionsForS(posS, vectorField, n, m);
             vectorField[posS.X, posS.Y] = new(x, y);
-
-            BfsRoute(posS, walkingMatrix, vectorField, n, m);
-
-
+            int[,] walkingMatrix = BfsRoute(posS, vectorField, n, m);
+            PrintMatrix(walkingMatrix, n,m);
+            MarkUnusedPipesAsWalls(walkingMatrix, vectorField, n, m);
+            SearchPoints(vectorField, n, m);
 
             return Task.CompletedTask;
         }
 
-        private void BfsRoute(MatrixCoordinate posS, int[,] walkingMatrix, Vector2<MatrixCoordinate>[,] vectorField, int n, int m)
+        private void MarkUnusedPipesAsWalls(int[,] walkingMatrix, Vector2<MatrixCoordinate>[,] vectorField, int n, int m)
         {
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    if (walkingMatrix[j,i] == 0)
+                    {
+                        vectorField[j, i].first = WALL;
+                        vectorField[j, i].second = WALL;
+                    }
+        }
+
+        private int[,] BfsRoute(MatrixCoordinate posS, Vector2<MatrixCoordinate>[,] vectorField, int n, int m)
+        {
+            int[,] walkingMatrix = new int[m, n];
             Queue<MatrixCoordinate> q = new Queue<MatrixCoordinate>();
             q.Enqueue(posS);
             walkingMatrix[posS.X, posS.Y] = 1;
@@ -56,10 +67,12 @@ namespace AoC.Quest10
                 int prevIndex = walkingMatrix[current.X, current.Y];
                 if (prevIndex > maxIndex)
                     maxIndex = prevIndex;
+                
 
                 var directions = vectorField[current.X, current.Y];
                 var firstNext = new MatrixCoordinate(current.X + directions.first.X, current.Y + directions.first.Y);
                 var secondNext = new MatrixCoordinate(current.X + directions.second.X, current.Y + directions.second.Y);
+
                 if (InBounds(firstNext.X, firstNext.Y, n, m) && walkingMatrix[firstNext.X, firstNext.Y] == 0)
                 {
                     q.Enqueue(firstNext);
@@ -71,9 +84,65 @@ namespace AoC.Quest10
                     walkingMatrix[secondNext.X, secondNext.Y] = prevIndex + 1;
                 }
             }
-            Console.WriteLine(maxIndex / 2);
-
+            //Console.WriteLine(maxIndex / 2);
+            return walkingMatrix;
         }
+
+        private void SearchPoints(Vector2<MatrixCoordinate>[,] vectorField, int n, int m)
+        {
+            int countInsidePoints = 0;
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    if (vectorField[j,i].first == WALL && vectorField[j, i].second == WALL)
+                    {
+                        bool isInside = IsInsideRayTrace(i, j, vectorField, m);
+                        if (isInside) countInsidePoints++;
+                        Console.Write(isInside ? 'I' : '0');
+                    }
+                    else
+                    {
+                        Console.Write(VectorToChar(vectorField[j,i]));
+                    }
+                }
+                Console.WriteLine();
+            }
+
+            Console.WriteLine(countInsidePoints);
+        }
+
+        private bool IsInsideRayTrace(int i, int j, Vector2<MatrixCoordinate>[,] vectorField, int m)
+        {
+            int encounters = 0;
+            for (int k = j; k >= 0; k--)
+            {
+                char letter = VectorToChar(vectorField[k,i]);
+                if (letter == '7')
+                {
+                    encounters++;
+                    do
+                    {
+                        k--;
+                        letter = VectorToChar(vectorField[k, i]);
+                    } while (k >= 0 && (letter == '-'));
+                    if(letter != 'L') k++;
+                }
+                else if (letter == 'J')
+                {
+                    encounters++;
+                    do
+                    {   
+                        k--;
+                        letter = VectorToChar(vectorField[k, i]);
+                    } while (k >= 0 && (letter == '-'));
+                    if (letter != 'F') k++;
+                }
+                else if (letter != '.') encounters++;
+            }
+            return encounters % 2 == 1;
+        }
+
 
 
         private (MatrixCoordinate x, MatrixCoordinate y) getDirectionsForS(MatrixCoordinate posS, Vector2<MatrixCoordinate>[,] vectorField, int n, int m)
@@ -103,7 +172,7 @@ namespace AoC.Quest10
             return (v[0], v[1]);
         }
 
-        Vector2<MatrixCoordinate> getDirections(char c)
+        Vector2<MatrixCoordinate> GetDirections(char c)
         {
             if (c == '|')
                 return new(UP, DOWN);
@@ -119,6 +188,23 @@ namespace AoC.Quest10
                 return new(DOWN, RIGHT);
             //if (c == '.')
             return new(WALL, WALL);
+        }
+
+        private char VectorToChar(Vector2<MatrixCoordinate> vector2)
+        {
+            if (vector2.first == UP && vector2.second == DOWN)
+                return '|';
+            if (vector2.first == LEFT && vector2.second == RIGHT)
+                return '-';
+            if (vector2.first == UP && vector2.second == RIGHT)
+                return 'L';
+            if (vector2.first == UP && vector2.second == LEFT)
+                return 'J';
+            if (vector2.first == DOWN && vector2.second == LEFT)
+                return '7';
+            if (vector2.first == DOWN && vector2.second == RIGHT)
+                return 'F';
+            return '.';
         }
 
         void PrintMatrix(int[,] walkingMatrix, int n, int m)
@@ -137,8 +223,10 @@ namespace AoC.Quest10
         {
             if (x < 0 || y < 0)
                 return false;
-            if (x > n || y > m) return false;
+            if (x > m || y > n) return false;
             return true;
         }
     }
 }
+
+
