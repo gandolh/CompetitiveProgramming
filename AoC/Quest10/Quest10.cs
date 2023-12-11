@@ -14,7 +14,7 @@ namespace AoC.Quest10
 
         public override Task Solve()
         {
-            string inPath = GetPathTo("quest10_2.in");
+            string inPath = GetPathTo("quest10_1.in");
             string outPath = GetPathTo("questResult.out");
             string[] lines = File.ReadAllLines(inPath);
             File.WriteAllText(outPath, "");
@@ -22,23 +22,30 @@ namespace AoC.Quest10
             int n = lines.Length;
             int m = lines[0].Length;
             MatrixCoordinate posS = new MatrixCoordinate(-1, -1);
-            Vector2<MatrixCoordinate>[,] VectorField = new Vector2<MatrixCoordinate>[m,n];
-            int[,] walkingMatrix = new int[m,n];
+            Vector2<MatrixCoordinate>[,] vectorField = new Vector2<MatrixCoordinate>[m, n];
+            int[,] walkingMatrix = new int[m, n];
 
             for (int i = 0; i < lines.Length; i++)
                 for (int j = 0; j < lines[i].Length; j++)
                 {
                     if (lines[i][j] != 'S')
-                        VectorField[j,i] = getDirections(lines[i][j]);
+                        vectorField[j, i] = getDirections(lines[i][j]);
                     else
                         posS = new MatrixCoordinate(j, i);
                 }
 
-            (MatrixCoordinate x, MatrixCoordinate y) = getDirectionsForS(posS, VectorField, n, m);
-            VectorField[posS.X, posS.Y] = new(x, y);
+            (MatrixCoordinate x, MatrixCoordinate y) = getDirectionsForS(posS, vectorField, n, m);
+            vectorField[posS.X, posS.Y] = new(x, y);
+
+            BfsRoute(posS, walkingMatrix, vectorField, n, m);
 
 
 
+            return Task.CompletedTask;
+        }
+
+        private void BfsRoute(MatrixCoordinate posS, int[,] walkingMatrix, Vector2<MatrixCoordinate>[,] vectorField, int n, int m)
+        {
             Queue<MatrixCoordinate> q = new Queue<MatrixCoordinate>();
             q.Enqueue(posS);
             walkingMatrix[posS.X, posS.Y] = 1;
@@ -50,27 +57,24 @@ namespace AoC.Quest10
                 if (prevIndex > maxIndex)
                     maxIndex = prevIndex;
 
-                var directions = VectorField[current.X, current.Y];
+                var directions = vectorField[current.X, current.Y];
                 var firstNext = new MatrixCoordinate(current.X + directions.first.X, current.Y + directions.first.Y);
                 var secondNext = new MatrixCoordinate(current.X + directions.second.X, current.Y + directions.second.Y);
-                if (InBounds(firstNext.X, firstNext.Y, n,m) && walkingMatrix[firstNext.X, firstNext.Y] == 0 )
+                if (InBounds(firstNext.X, firstNext.Y, n, m) && walkingMatrix[firstNext.X, firstNext.Y] == 0)
                 {
                     q.Enqueue(firstNext);
                     walkingMatrix[firstNext.X, firstNext.Y] = prevIndex + 1;
                 }
-                if (InBounds(secondNext.X, secondNext.Y, n, m) && walkingMatrix[secondNext.X, secondNext.Y] == 0)
+                else if (InBounds(secondNext.X, secondNext.Y, n, m) && walkingMatrix[secondNext.X, secondNext.Y] == 0)
                 {
                     q.Enqueue(secondNext);
                     walkingMatrix[secondNext.X, secondNext.Y] = prevIndex + 1;
                 }
-
-                //PrintMatrix(walkingMatrix, n, m);
             }
+            Console.WriteLine(maxIndex / 2);
 
-            PrintMatrix(walkingMatrix, n, m);
-            //Console.WriteLine(maxIndex - 1);
-            return Task.CompletedTask;
         }
+
 
         private (MatrixCoordinate x, MatrixCoordinate y) getDirectionsForS(MatrixCoordinate posS, Vector2<MatrixCoordinate>[,] vectorField, int n, int m)
         {
@@ -85,11 +89,11 @@ namespace AoC.Quest10
             if (posY - 1 >= 0)
                 upperElt = vectorField[posX, posY - 1];
             if (posY < n)
-                downElt = vectorField[ posX, posY + 1];
+                downElt = vectorField[posX, posY + 1];
             if (posX < m)
-                rightElt = vectorField[ posX + 1, posY];
+                rightElt = vectorField[posX + 1, posY];
             if (posX - 1 >= 0)
-                leftElt = vectorField[ posX - 1, posY];
+                leftElt = vectorField[posX - 1, posY];
 
 
             if (upperElt != null && (upperElt.first.Y == 1 || upperElt.second.Y == 1)) v.Add(UP);
@@ -123,7 +127,7 @@ namespace AoC.Quest10
             {
                 for (int j = 0; j < m; j++)
                 {
-                    Console.Write((walkingMatrix[j, i] == 0 ? "." : walkingMatrix[j,i] - 1) + " ");
+                    Console.Write((walkingMatrix[j, i] == 0 ? "." : walkingMatrix[j, i] - 1) + " ");
                 }
                 Console.WriteLine();
             }
@@ -131,9 +135,9 @@ namespace AoC.Quest10
 
         bool InBounds(int x, int y, int n, int m)
         {
-            if(x < 0 || y < 0)
+            if (x < 0 || y < 0)
                 return false;
-            if( x> n || y> m ) return false;
+            if (x > n || y > m) return false;
             return true;
         }
     }
