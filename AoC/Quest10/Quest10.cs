@@ -14,7 +14,7 @@ namespace AoC.Quest10
 
         public override Task Solve()
         {
-            string inPath = GetPathTo("quest10_1.in");
+            string inPath = GetPathTo("quest10_6.in");
             string outPath = GetPathTo("questResult.out");
             string[] lines = File.ReadAllLines(inPath);
             File.WriteAllText(outPath, "");
@@ -36,7 +36,7 @@ namespace AoC.Quest10
             (MatrixCoordinate x, MatrixCoordinate y) = getDirectionsForS(posS, vectorField, n, m);
             vectorField[posS.X, posS.Y] = new(x, y);
             int[,] walkingMatrix = BfsRoute(posS, vectorField, n, m);
-            PrintMatrix(walkingMatrix, n,m);
+            //PrintMatrix(walkingMatrix, n,m);
             MarkUnusedPipesAsWalls(walkingMatrix, vectorField, n, m);
             SearchPoints(vectorField, n, m);
 
@@ -99,14 +99,14 @@ namespace AoC.Quest10
                     {
                         bool isInside = IsInsideRayTrace(i, j, vectorField, m);
                         if (isInside) countInsidePoints++;
-                        Console.Write(isInside ? 'I' : '0');
+                        //Console.Write(isInside ? 'I' : '0');
                     }
                     else
                     {
-                        Console.Write(VectorToChar(vectorField[j,i]));
+                        //Console.Write(VectorToChar(vectorField[j,i]));
                     }
                 }
-                Console.WriteLine();
+                //Console.WriteLine();
             }
 
             Console.WriteLine(countInsidePoints);
