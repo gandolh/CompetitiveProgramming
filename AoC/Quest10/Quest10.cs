@@ -14,7 +14,7 @@ namespace AoC.Quest10
 
         public override Task Solve()
         {
-            string inPath = GetPathTo("quest10_1.in");
+            string inPath = GetPathTo("quest10_2.in");
             string outPath = GetPathTo("questResult.out");
             string[] lines = File.ReadAllLines(inPath);
             File.WriteAllText(outPath, "");
@@ -67,8 +67,8 @@ namespace AoC.Quest10
                 //PrintMatrix(walkingMatrix, n, m);
             }
 
-            //PrintMatrix(walkingMatrix, n,m);
-            Console.WriteLine(maxIndex - 1);
+            PrintMatrix(walkingMatrix, n, m);
+            //Console.WriteLine(maxIndex - 1);
             return Task.CompletedTask;
         }
 
