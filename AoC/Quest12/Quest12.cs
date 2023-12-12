@@ -21,26 +21,13 @@ namespace AoC.Quest12
                 string[] splitArray = line.Split(' ');
                 string sequence = splitArray[0];
                 int[] numbers = splitArray[1].Split(',').Select(Int32.Parse).ToArray();
-                Backtracking bkt1 = new Backtracking(sequence, numbers);
-                Backtracking bkt2 = new Backtracking("?" + sequence, numbers);
-                Backtracking bkt3 = new Backtracking(sequence + "?", numbers);
-                Int64 posibilities = 0;
-                Int64 solutionWithoutAdding = bkt1.FindSolutions();
-                Int64 solutions1 = bkt2.FindSolutions();
-                Int64 solutions2 = bkt3.FindSolutions();
-                if (sequence.EndsWith("#"))
-                {
-                    posibilities = solutionWithoutAdding * solutions2
-                        * solutions2 * solutions2 * solutions2;
-                }
-                else
-                {
-                    Int64 noSolution = Math.Max(solutions1, solutions2);
-                    posibilities = solutionWithoutAdding * noSolution *
-                        noSolution * noSolution * noSolution;
-                }
+                string newSequence = string.Join("?",Enumerable.Repeat(sequence, 5));
+                int[] newNumbers = Enumerable.Repeat(numbers, 5).SelectMany(arr => arr).ToArray();
+                Backtracking bkt1 = new Backtracking(newSequence, newNumbers);
+                Int64 posibilities = bkt1.FindSolutions();
 
-                Console.WriteLine("====" + posibilities);
+
+
                 sum += posibilities;
             }
 
