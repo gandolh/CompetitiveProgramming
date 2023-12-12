@@ -11,7 +11,7 @@ namespace AoC.Quest12
     {
         private string _sequence;
         private int[] _numbers;
-        private int _solutions;
+        private Int64 _solutions;
         private char[] _currentSolution;
 
 
@@ -23,7 +23,7 @@ namespace AoC.Quest12
             _currentSolution = new char[sequence.Length];
 
         }
-        public int FindSolutions(string sequence, int[] numbers)
+        public Int64 FindSolutions()
         {
             RecursiveBacktracking(0, 0, 0);
             Console.WriteLine(_solutions);
