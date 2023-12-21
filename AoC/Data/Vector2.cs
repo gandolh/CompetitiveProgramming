@@ -18,6 +18,12 @@ namespace AoC.Data
         {
         }
 
+        public Vector2(Vector2<T1> v)
+        {
+            this.first = v.first;
+            this.second = v.second;
+        }
+
         public T1 this[int key]
         {
             get => GetValue(key);

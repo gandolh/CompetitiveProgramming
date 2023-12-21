@@ -56,6 +56,9 @@ namespace AoC.Quest12
                 }
             }
 
+            if (numCurrentIndex > _numbers.Length || (numCurrentIndex < _numbers.Length && accumulatedDiez > _numbers[numCurrentIndex]))
+                return;
+
 
 
             if (_sequence[seqCurrentIndex] == '#')
