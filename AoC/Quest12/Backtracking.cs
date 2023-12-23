@@ -26,7 +26,7 @@ namespace AoC.Quest12
         public Int64 FindSolutions()
         {
             RecursiveBacktracking(0, 0, 0);
-            Console.WriteLine(_solutions);
+            //Console.WriteLine(_solutions);
             return _solutions;
 
         }

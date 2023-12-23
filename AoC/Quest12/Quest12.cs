@@ -12,7 +12,7 @@ namespace AoC.Quest12
             string[] lines = File.ReadAllLines(inPath);
             File.WriteAllText(outPath, "");
 
-            int degreeOfParallelism = Environment.ProcessorCount;
+            int degreeOfParallelism = Environment.ProcessorCount * 3/4;
 
             Parallel.ForEach(
                 Partitioner.Create(0, lines.Length),
@@ -21,18 +21,20 @@ namespace AoC.Quest12
                 {
                     for (int i = range.Item1; i < range.Item2; i++)
                     {
-                        DoDynamicProgramming(lines[i]);
+                        DoDynamicProgramming(lines[i],i,lines.Length);
                     }
                 });
 
 
             Console.WriteLine(sum);
+            File.WriteAllText(outPath, sum.ToString());
 
             return Task.CompletedTask;
         }
 
-        private void DoDynamicProgramming(string line)
+        private void DoDynamicProgramming(string line, int currentIndex, int length)
         {
+            Console.WriteLine($"{currentIndex} / {length}");
             string[] splitArray = line.Split(' ');
             string sequence = splitArray[0];
             int[] numbers = splitArray[1].Split(',').Select(Int32.Parse).ToArray();

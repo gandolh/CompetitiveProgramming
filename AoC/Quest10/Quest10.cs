@@ -1,5 +1,4 @@
 ﻿using AoC.Data;
-using AoC.Quesint0;
 
 namespace AoC.Quest10
 {
