@@ -22,5 +22,10 @@ namespace AoC.Quest16
            this.X += dir.X;
             this.Y += dir.Y;
         }
+
+        internal MatrixCoordinate AddWithClone(MatrixDirection dir)
+        {
+          return  new MatrixCoordinate(this.X + dir.X, this.Y + dir.Y);
+        }
     }
 }

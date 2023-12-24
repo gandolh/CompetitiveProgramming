@@ -1,9 +1,12 @@
 ﻿using AoC.Quest16;
 using Microsoft.Diagnostics.Tracing;
+using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsWPF;
 using System.Data;
 
 namespace AoC.Quest18
 {
+    // DOING SHOELACE FORMULA and Picks Theorem
+    // i can do it more ram efficient by not saving every point and saving a total number of boundaries
     internal class Quest18 : BaseQuest
     {
         private readonly MatrixDirection UP = new MatrixDirection(-1, 0);
@@ -11,87 +14,87 @@ namespace AoC.Quest18
         private readonly MatrixDirection DOWN = new MatrixDirection(1, 0);
         private readonly MatrixDirection LEFT = new MatrixDirection(0, -1);
         private readonly MatrixDirection NONE = new MatrixDirection(-99, -99);
-        char[][] Map = [];
-        private const int _maxWidth = 10;
-        private const int _maxHeight = 10;
+
+        private readonly List<MatrixCoordinate> ShapeCoordinates = new List<MatrixCoordinate>();
         public override Task Solve()
         {
             string inPath = GetPathTo("quest18_1.in");
             string outPath = GetPathTo("questResult.out");
             File.WriteAllText(outPath, "");
             string[] lines = File.ReadAllLines(inPath);
-            InitMap();
-            MatrixCoordinate currentPos = new MatrixCoordinate(0,0);
-            Map[0][0] = '#';
+            MatrixCoordinate lastCoordinate = new MatrixCoordinate(0, 0);
+            ShapeCoordinates.Add(lastCoordinate);
             foreach (var line in lines)
             {
                 string[] splitArray = line.Split(' ');
-                char dirChar = splitArray[0][0];
-                string valueStr = splitArray[1];
+                string hex = splitArray[2].Replace("(","").Replace(")","").Replace("#","");
+                
+                
+                char dirChar = IntToDirChar(Int32.Parse(hex[5].ToString()));
                 MatrixDirection dir = GetDirection(dirChar);
-                int value = Int32.Parse(valueStr);
-                for(int i = 0;i < value; i++)
+                int value = HexToInt(hex);
+                for(int i=0; i<value; i++)
                 {
-                    currentPos.Add(dir);
-                    Map[currentPos.X][currentPos.Y] = '#';
+                    MatrixCoordinate newCoordinate = lastCoordinate.AddWithClone(dir);
+                    ShapeCoordinates.Add(newCoordinate);
+                    lastCoordinate = newCoordinate;
                 }
             }
 
-           
-            //int borderResult = GetDiezCount(Map, _maxHeight, _maxWidth);
-            //Console.WriteLine(borderResult);
-            FillShape(Map, _maxHeight, _maxWidth);
-            //Print(Map, _maxHeight, _maxWidth);
-            int shapeResult = GetDiezCount(Map, _maxHeight, _maxWidth);
-            Console.WriteLine(shapeResult);
+            double area = getShoelaceArea();
+            long boundaries = ShapeCoordinates.Count;
+            long interior = (long)area - boundaries/2 + 1;
+            long resultArea = interior + boundaries - 1;
+            Console.WriteLine(resultArea);
+            //Console.WriteLine(shapeResult);
             return Task.CompletedTask;
         }
 
-        private void FillShape(char[][] map, int maxWidth, int maxHeight)
+        private int HexToInt(string hex)
         {
-            for(int i=0;i< maxHeight; i++)
-                for(int j=0;j<maxWidth; j++)
-                    if (map[i][j] == '.')
-                    {
-                        bool a = FindDiezOnleft(map, i, j);
-                        bool b = FindDiezOnRight(map, i, j);
-                        if (a && b) map[i][j] = '#';
-                    }
+            string value = hex.Substring(0, 5);
+            return Convert.ToInt32("0x" + value, 16);
         }
 
-        private bool FindDiezOnRight(char[][] map, int i, int j)
+        private char IntToDirChar(int v)
         {
-            for(int k = j;k<_maxWidth; k++)
+            switch (v)
             {
-                if (map[i][k] == '#')
-                    return true;   
+                case 0:
+                    return 'R';
+                case 1:
+                    return 'D';
+                case 2:
+                    return 'L';
+                case 3:
+                    return 'U';
+                default:
+                    return '\0';
             }
-            return false;
         }
 
-        private bool FindDiezOnleft(char[][] map, int i, int j)
+        private double getShoelaceArea()
         {
-            for (int k = j; k >=0; k--)
+            double sum = 0;
+            for(int i = 0;  i < ShapeCoordinates.Count; i++)
             {
-                if (map[i][k] == '#')
-                    return true;
+                MatrixCoordinate prev;
+                MatrixCoordinate next;
+                if (i == 0)
+                    prev = ShapeCoordinates.Last();
+                else
+                    prev= ShapeCoordinates[i - 1];
+                
+                if(i == ShapeCoordinates.Count - 1)
+                    next = ShapeCoordinates.First();
+                else
+                    next = ShapeCoordinates[i + 1];
+                sum = sum + ShapeCoordinates[i].X * (next.Y - prev.Y);
             }
-            return false;
+
+            return Math.Abs(sum) / 2;
         }
 
-        private void InitMap()
-        {
-            
-            Map = new char[_maxHeight][];
-            for (int i = 0; i < _maxHeight; i++)
-            {
-                Map[i] = new char[_maxWidth];
-                for (int j = 0; j < _maxWidth; j++)
-                {
-                    Map[i][j] = '.';
-                }
-            }
-        }
         private MatrixDirection GetDirection(char dirChar)
         {
             if (dirChar == 'U') return UP;
@@ -99,15 +102,6 @@ namespace AoC.Quest18
             if (dirChar == 'D') return DOWN;
             if (dirChar == 'L') return LEFT;
             return NONE;
-        }
-        private int GetDiezCount(char[][] map, int n, int m)
-        {
-            int count = 0;
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < m; j++)
-                    if (map[i][j] == '#')
-                        count++;
-            return count;
         }
         private void Print(char[][] mat, int n, int m)
         {
