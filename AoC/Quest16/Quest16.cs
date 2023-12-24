@@ -12,7 +12,6 @@ namespace AoC.Quest16
         private readonly MatrixDirection NONE = new MatrixDirection(-99, -99);
         private char[][] _filledMap = [];
         private char[][] _directionMap = [];
-        private List<WalkInstruction> _occurences = new List<WalkInstruction>();
 
         public override Task Solve()
         {
@@ -23,49 +22,62 @@ namespace AoC.Quest16
             char[][] originalMap = lines.ConvertToCharArray();
             int n = originalMap.Length,
                 m = originalMap[0].Length;
-
+            int maxResult = -1;
+            int result = 0;
             BuildEmptyMap(originalMap, out _filledMap);
             BuildEmptyMap(originalMap, out _directionMap);
             _filledMap = new char[originalMap.Length][];
             for (int i = 0; i < originalMap.Length; i++)
                 _filledMap[i] = new char[originalMap[i].Length];
-            Walk(originalMap);
-            //Print(_filledMap,n,m);
-            //Console.WriteLine("=============");
-            //Print(_directionMap,n,m);
 
-            int result = GetVisitedNodesCount(_filledMap,n,m);
-            Console.WriteLine(result);
+            for (int i = 0; i < n; i++)
+            {
+                // left border
+                EmptyMap(_filledMap);
+                Walk(originalMap, i, 0, RIGHT);
+                result = GetVisitedNodesCount(_filledMap, n, m);
+                if (result > maxResult) maxResult = result;
+
+                // right border
+                EmptyMap(_filledMap);
+                Walk(originalMap, i, m, LEFT);
+                result = GetVisitedNodesCount(_filledMap, n, m);
+                if (result > maxResult) maxResult = result;
+            }
+
+            for (int i = 0; i < m; i++)
+            {
+                // up border
+                EmptyMap(_filledMap);
+                Walk(originalMap, 0, i, DOWN);
+                result = GetVisitedNodesCount(_filledMap, n, m);
+                if (result > maxResult) maxResult = result;
+
+                // down border
+                EmptyMap(_filledMap);
+                Walk(originalMap, n,i, UP);
+                result = GetVisitedNodesCount(_filledMap, n, m);
+                if (result > maxResult) maxResult = result;
+            }
+
+            Console.WriteLine(maxResult);
             return Task.CompletedTask;
         }
 
-        private int GetVisitedNodesCount(char[][] map, int n, int m)
-        {
-            int count = 0; 
-            for(int i=0; i<n; i++)
-                for (int j = 0; j < m; j++)
-                    if (map[i][j] == '#')
-                        count++;
-            return count;
-        }
 
-        private void BuildEmptyMap(char[][] originalMap, out char[][] resultMap)
+        private void Walk(char[][] originalMap, int startX, int startY, MatrixDirection dir)
         {
-            resultMap = new char[originalMap.Length][];
-            for (int i = 0; i < originalMap.Length; i++)
-                resultMap[i] = new char[originalMap[i].Length];
-        }
+            Console.WriteLine("Coords:" + startX + " " + startY);
+            List<WalkInstruction> _occurences = new List<WalkInstruction>();
 
-        private void Walk(char[][] originalMap)
-        {
             int n = originalMap.Length, m = originalMap[0].Length;
             Queue<WalkInstruction> queue = new();
-            queue.Enqueue(new WalkInstruction(0, 0, RIGHT));
+            queue.Enqueue(new WalkInstruction(startX, startY, dir));
 
             while (queue.Count > 0)
             {
                 var currWalk = queue.Dequeue();
-             
+
                 if (OutOfBoundaries(currWalk.coordinates.X, currWalk.coordinates.Y, n, m) == true
                     || _occurences.IndexOf(currWalk) != -1)
                     continue;
@@ -82,7 +94,7 @@ namespace AoC.Quest16
                 MatrixDirection newDirection1 = NONE;
                 MatrixDirection newDirection2 = NONE;
                 _filledMap[currWalk.coordinates.X][currWalk.coordinates.Y] = '#';
-                char directionMapSym = (currentChar == '|' || currentChar == '-') 
+                char directionMapSym = (currentChar == '|' || currentChar == '-')
                     ? currentChar : getSymbolDir(currWalk.Direction);
                 _directionMap[currWalk.coordinates.X][currWalk.coordinates.Y] = directionMapSym;
                 if (currentChar == '\\')
@@ -142,11 +154,37 @@ namespace AoC.Quest16
             return false;
         }
 
+        private int GetVisitedNodesCount(char[][] map, int n, int m)
+        {
+            int count = 0;
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    if (map[i][j] == '#')
+                        count++;
+            return count;
+        }
+
+        private void BuildEmptyMap(char[][] originalMap, out char[][] resultMap)
+        {
+            resultMap = new char[originalMap.Length][];
+            for (int i = 0; i < originalMap.Length; i++)
+                resultMap[i] = new char[originalMap[i].Length];
+        }
+
+        private void EmptyMap(char[][] resultMap)
+        {
+            int m = resultMap[0].Length;
+            for (int i = 0; i < resultMap.Length; i++)
+                for (int j = 0; j < m; j++)
+                    resultMap[i][j] = (char)0;
+        }
+
+
         private void Print(char[][] mat, int n, int m)
         {
-            for(int i=0; i<n; i++)
+            for (int i = 0; i < n; i++)
             {
-                for(int j=0; j<m; j++)
+                for (int j = 0; j < m; j++)
                 {
                     if (mat[i][j] == 0)
                         Console.Write('.');
