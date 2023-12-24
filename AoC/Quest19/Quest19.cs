@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using BenchmarkDotNet.Reports;
+using System.Linq.Expressions;
 using System.Reflection;
 
 
@@ -7,7 +8,7 @@ namespace AoC.Quest19
     internal class Quest19 : BaseQuest
     {
         Dictionary<string, Automaton> Automatas { get; set; } = [];
-
+        public StateMachine stateMachine { get; set; } = new();
         public override Task Solve()
         {
             string inPath = GetPathTo("quest19_0.in");
@@ -15,15 +16,37 @@ namespace AoC.Quest19
             File.WriteAllText(outPath, "");
             string[] lines = File.ReadAllLines(inPath);
             int stopIndex = ReadAutomatas(lines);
-
+            int totalSum = 0;
             // read xmas values
-            for (int i = stopIndex; i < lines.Length; i++)
-            {
-                string line = lines[i].Replace("{", "").Replace("}", "");
-                int[] values = line.Split(",").Select(el => Int32.Parse(el.Split("=")[1])).ToArray();
-                bool result = Automatas["in"].Run(values[0], values[1], values[2], values[3]);
-            }
+            //for (int i = stopIndex; i < lines.Length; i++)
+            //{
+            //    string line = lines[i].Replace("{", "").Replace("}", "");
+            //    int[] values = line.Split(",").Select(el => Int32.Parse(el.Split("=")[1])).ToArray();
+            //    bool result = Automatas["in"].Run(values[0], values[1], values[2], values[3]);
+            //    if (stateMachine.IsCompleted)
+            //        totalSum = totalSum + values[0] + values[1] + values[2] + values[3];
+            //    Console.WriteLine(stateMachine.IsCompleted);
+            //    Console.WriteLine();
+            //    stateMachine.Reset();
+            //}
 
+            long count = 0;
+            int iteration = 0;
+            for (int x = 1; x <= 4000; x++)
+                for (int m = x+1; m <= 4000; m++)
+                    for (int a = m+1; a <= 4000; a++)
+                        for (int s = a+1; s <= 4000; s++)
+                        {
+                            Automatas["in"].Run(x,m,a,s);
+                            if (stateMachine.IsCompleted)
+                                count++;
+                            stateMachine.Reset();
+                            
+                            iteration++;
+                            Console.WriteLine($"{iteration}/{256_000_000_000_000}");
+                        }
+
+            Console.WriteLine(count);
             return Task.CompletedTask;
         }
 
@@ -94,9 +117,18 @@ namespace AoC.Quest19
         {
             Expression actionExpression;
             if (rhs.Last() == 'A')
-                actionExpression = Expression.Constant(true);
+            {
+                var instance = stateMachine;
+                MethodInfo methodInfo = instance.GetType().GetMethod(nameof(instance.MarkCompleted))!;
+                actionExpression = Expression.Call(Expression.Constant(instance), methodInfo, paramX, paramM, paramA, paramS);
+
+            }
             else if (rhs.Last() == 'R')
-                actionExpression = Expression.Constant(false);
+            {
+                var instance = stateMachine;
+                MethodInfo methodInfo = instance.GetType().GetMethod(nameof(instance.MarkFailed))!;
+                actionExpression = Expression.Call(Expression.Constant(instance), methodInfo, paramX, paramM, paramA, paramS);
+            }
             else
             {
                 if (!Automatas.ContainsKey(rhs))
@@ -154,4 +186,44 @@ namespace AoC.Quest19
         }
     }
 
+    internal class Automaton
+    {
+        public Func<int, int, int, int, bool> func { get; set; }
+        public string label { get; set; }
+
+
+        public bool Run(int x, int m, int a, int s)
+        {
+            //Console.WriteLine(label);
+            return func(x, m, a, s);
+
+        }
+
+
+    }
+
+    internal class StateMachine
+    {
+        public bool IsCompleted { get; set; }
+        public bool IsFailed { get; set; }
+
+
+        public bool MarkCompleted(int x, int m, int a, int s)
+        {
+            IsCompleted = true;
+            return true;
+        }
+
+        public bool MarkFailed(int x, int m, int a, int s)
+        {
+            IsFailed = true;
+            return true;
+        }
+
+        public void Reset()
+        {
+            IsCompleted = false;
+            IsFailed = false;
+        }
+    }
 }
