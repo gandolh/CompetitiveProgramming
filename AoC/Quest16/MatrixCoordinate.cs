@@ -16,5 +16,11 @@ namespace AoC.Quest16
         {
             return HashCode.Combine(base.GetHashCode(), X, Y);
         }
+
+        internal void Add(MatrixDirection dir)
+        {
+           this.X += dir.X;
+            this.Y += dir.Y;
+        }
     }
 }

@@ -7,6 +7,7 @@ using AoC.Quest13;
 using AoC.Quest14;
 using AoC.Quest15;
 using AoC.Quest16;
+using AoC.Quest18;
 
 
 //BaseQuest q = new Quest1();
@@ -23,7 +24,8 @@ using AoC.Quest16;
 //BaseQuest q = new Quest13();
 //BaseQuest q = new Quest14();
 //BaseQuest q = new Quest15();
-BaseQuest q = new Quest16();
+//BaseQuest q = new Quest16();
+BaseQuest q = new Quest18();
 await q.Solve();
 
 //var summary = BenchmarkRunner.Run<BenchmarkQuiz>();
